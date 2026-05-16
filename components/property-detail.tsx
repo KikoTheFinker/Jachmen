@@ -119,7 +119,7 @@ export function PropertyDetail({ mint }: { mint: string }) {
         </div>
 
         {/* Field table */}
-        <div className="divide-y divide-k-border rounded-b-lg border border-k-border border-t-0">
+        <div className="divide-y divide-k-border rounded-b-lg border border-k-border border-t-0 ps-4">
           <FieldRow label="Area">
             <span className="text-xl font-bold text-k-text">{property.areaM2.toLocaleString()} m²</span>
           </FieldRow>
