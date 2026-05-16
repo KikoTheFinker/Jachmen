@@ -1,101 +1,125 @@
-import Image from "next/image";
+import Link from 'next/link';
+import { MapPin, Shield, Zap } from 'lucide-react';
+import { StatCounters } from '@/components/stats';
 
-export default function Home() {
+const features = [
+  {
+    icon: MapPin,
+    title: 'GPS-anchored parcels',
+    body: 'Draw polygon boundaries on the live cadastral map. Coordinates are stored in the NFT asset and publicly verifiable.',
+  },
+  {
+    icon: Shield,
+    title: 'Document fingerprinting',
+    body: 'Upload your cadastral PDF. A SHA-256 hash is computed client-side and anchored to the on-chain deed — proving authenticity without exposing the document.',
+  },
+  {
+    icon: Zap,
+    title: 'Atomic USDC transfers',
+    body: 'Buy or sell deeds through the Anchor escrow program. Deed and payment settle in the same transaction — no counterparty risk.',
+  },
+] as const;
+
+export default function HomePage() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className="space-y-24">
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+      {/* ── Hero ──────────────────────────────────────────── */}
+      <section className="pt-16 pb-4 text-center">
+        {/* Eyebrow */}
+        <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-k-accent/30 bg-k-accentDim px-4 py-1.5">
+          <span className="h-1.5 w-1.5 rounded-full bg-k-accent" />
+          <span className="text-xs font-medium text-k-accent">
+            Republic of North Macedonia · Solana Devnet
+          </span>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        {/* Heading */}
+        <h1 className="mx-auto max-w-3xl text-5xl font-bold tracking-tight text-k-text sm:text-6xl lg:text-[68px] lg:leading-[1.08]">
+          The land registry<br />
+          <span className="text-k-accent">Macedonia</span> deserves.
+        </h1>
+
+        {/* Subtitle */}
+        <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-k-muted">
+          Blockchain-anchored property deeds. Every boundary hashed, every transfer
+          permanent. Owned by the chain, verifiable by anyone.
+        </p>
+
+        {/* CTAs */}
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+          <Link
+            href="/register"
+            className="inline-flex h-11 items-center gap-2 rounded-lg bg-k-accent px-6 text-sm font-semibold text-k-bg transition hover:bg-amber-400 hover:shadow-glow"
+          >
+            Register a parcel
+            <span aria-hidden>→</span>
+          </Link>
+          <Link
+            href="/registry"
+            className="inline-flex h-11 items-center gap-2 rounded-lg border border-k-border bg-k-surface px-6 text-sm font-medium text-k-text transition hover:bg-k-raised hover:border-k-muted/40"
+          >
+            Browse registry
+          </Link>
+        </div>
+      </section>
+
+      {/* ── Stats ─────────────────────────────────────────── */}
+      <section>
+        <StatCounters />
+      </section>
+
+      {/* ── Features ──────────────────────────────────────── */}
+      <section className="space-y-10">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold tracking-tight text-k-text">
+            Built for integrity
+          </h2>
+          <p className="mt-3 text-base text-k-muted">
+            Three primitives that make land corruption structurally impossible.
+          </p>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-3">
+          {features.map(({ icon: Icon, title, body }) => (
+            <div
+              key={title}
+              className="rounded-xl border border-k-border bg-k-surface p-6 transition hover:border-k-border/60 hover:bg-k-raised shadow-card"
+            >
+              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-k-accentDim">
+                <Icon className="h-5 w-5 text-k-accent" />
+              </div>
+              <h3 className="text-sm font-semibold text-k-text">{title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-k-muted">{body}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── CTA strip ─────────────────────────────────────── */}
+      <section className="rounded-2xl border border-k-accent/20 bg-k-accentDim p-10 text-center">
+        <h2 className="text-2xl font-bold text-k-text">
+          Ready to anchor your land on-chain?
+        </h2>
+        <p className="mt-3 text-base text-k-muted">
+          Phantom wallet on Devnet · Free to use · Takes under 5 minutes.
+        </p>
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+          <Link
+            href="/register"
+            className="inline-flex h-11 items-center gap-2 rounded-lg bg-k-accent px-6 text-sm font-semibold text-k-bg transition hover:bg-amber-400 hover:shadow-glow"
+          >
+            Register a parcel →
+          </Link>
+          <Link
+            href="/map"
+            className="inline-flex h-11 items-center gap-2 rounded-lg border border-k-border bg-k-surface px-6 text-sm font-medium text-k-text transition hover:bg-k-raised"
+          >
+            View parcel map
+          </Link>
+        </div>
+      </section>
+
     </div>
   );
 }

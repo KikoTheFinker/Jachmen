@@ -1,0 +1,156 @@
+{
+  "address": "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS",
+  "metadata": {
+    "name": "kataster_chain",
+    "version": "0.1.0",
+    "spec": "0.1.0"
+  },
+  "instructions": [
+    {
+      "name": "initialize",
+      "discriminator": [175, 175, 109, 31, 13, 152, 155, 237],
+      "accounts": [
+        { "name": "payer", "writable": true, "signer": true },
+        { "name": "treasury", "writable": true, "signer": false },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [{ "name": "authority", "type": "pubkey" }]
+    },
+    {
+      "name": "listProperty",
+      "discriminator": [254, 101, 42, 174, 220, 160, 42, 82],
+      "accounts": [
+        { "name": "seller", "writable": true, "signer": true },
+        {
+          "name": "mplCoreProgram",
+          "address": "CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d"
+        },
+        { "name": "asset", "writable": true, "signer": false },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        },
+        { "name": "listing", "writable": true, "signer": false }
+      ],
+      "args": [
+        { "name": "plotId", "type": "string" },
+        { "name": "municipality", "type": "string" },
+        { "name": "landType", "type": "u8" },
+        { "name": "areaM2", "type": "u64" },
+        { "name": "priceUsdc", "type": "u64" }
+      ]
+    },
+    {
+      "name": "buyProperty",
+      "discriminator": [128, 136, 62, 184, 252, 187, 128, 130],
+      "accounts": [
+        { "name": "buyer", "writable": true, "signer": true },
+        {
+          "name": "mplCoreProgram",
+          "address": "CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d"
+        },
+        { "name": "seller", "writable": true, "signer": false },
+        { "name": "listing", "writable": true, "signer": false },
+        { "name": "asset", "writable": true, "signer": false },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        },
+        { "name": "treasuryState", "writable": true, "signer": false },
+        {
+          "name": "usdcMint",
+          "address": "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU"
+        },
+        { "name": "buyerUsdc", "writable": true, "signer": false },
+        { "name": "sellerUsdc", "writable": true, "signer": false },
+        { "name": "treasuryUsdc", "writable": true, "signer": false },
+        {
+          "name": "tokenProgram",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "associatedTokenProgram",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "cancelListing",
+      "discriminator": [41, 183, 50, 232, 230, 233, 157, 70],
+      "accounts": [
+        { "name": "listedBy", "writable": true, "signer": true },
+        {
+          "name": "mplCoreProgram",
+          "address": "CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d"
+        },
+        { "name": "asset", "writable": true, "signer": false },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        },
+        { "name": "listing", "writable": true, "signer": false }
+      ],
+      "args": []
+    }
+  ],
+  "accounts": [
+    {
+      "name": "listingAccount",
+      "discriminator": [59, 89, 136, 25, 21, 196, 183, 13]
+    },
+    {
+      "name": "treasuryAccount",
+      "discriminator": [204, 140, 18, 173, 90, 152, 134, 123]
+    }
+  ],
+  "types": [
+    {
+      "name": "ListingAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          { "name": "listedBy", "type": "pubkey" },
+          { "name": "owner", "type": "pubkey" },
+          { "name": "nftAsset", "type": "pubkey" },
+          { "name": "priceUsdc", "type": "u64" },
+          { "name": "plotId", "type": "string" },
+          { "name": "municipality", "type": "string" },
+          { "name": "landType", "type": "u8" },
+          { "name": "areaM2", "type": "u64" },
+          { "name": "isActive", "type": "bool" },
+          { "name": "createdAt", "type": "i64" },
+          { "name": "soldAt", "type": "i64" },
+          { "name": "bump", "type": "u8" }
+        ]
+      }
+    },
+    {
+      "name": "TreasuryAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          { "name": "authority", "type": "pubkey" },
+          { "name": "totalCollected", "type": "u64" }
+        ]
+      }
+    }
+  ],
+  "errors": [
+    { "code": 6000, "name": "PlotIdTooLong", "msg": "Plot id exceeds maximum length." },
+    { "code": 6001, "name": "MunicipalityTooLong", "msg": "Municipality exceeds maximum length." },
+    { "code": 6002, "name": "InvalidAmount", "msg": "Invalid pricing amount." },
+    { "code": 6003, "name": "NotAssetOwner", "msg": "Only the NFT owner may list." },
+    { "code": 6004, "name": "EscrowMismatch", "msg": "Escrow NFT owner does not match the listing vault." },
+    { "code": 6005, "name": "InactiveListing", "msg": "Listing is inactive." },
+    { "code": 6006, "name": "SellerMismatch", "msg": "Seller wallet does not match listing owner." },
+    { "code": 6007, "name": "UnauthorizedCancel", "msg": "Only the listing creator may cancel." },
+    { "code": 6008, "name": "MathOverflow", "msg": "Mathematic overflow occurred." },
+    { "code": 6009, "name": "FeeMath", "msg": "Arithmetic failed while computing protocol fee." },
+    { "code": 6010, "name": "InsufficientUsdc", "msg": "Buyer wallet does not have enough USDC for price + fees." },
+    { "code": 6011, "name": "AssetMismatch", "msg": "Listing asset pubkey mismatch." }
+  ]
+}

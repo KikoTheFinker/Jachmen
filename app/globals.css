@@ -3,25 +3,75 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg:        #09090b;
+  --surface:   #111113;
+  --raised:    #1c1c1f;
+  --border:    #27272a;
+  --text:      #f4f4f5;
+  --muted:     #a1a1aa;
+  --subtle:    #52525b;
+  --accent:    #f59e0b;
+  --accent-dim:rgba(245,158,11,0.12);
+  --red:       #ef4444;
+  --radius:    8px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+html { color-scheme: dark; }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+.motion-fade {
+  animation: fade-in 150ms ease-out both;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Scrollbar ───────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--subtle); }
+
+/* ── Wallet adapter ──────────────────────────────────── */
+.wallet-adapter-modal-wrapper .wallet-adapter-button {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: var(--radius);
+  font-size: 13px;
+  transition: background 150ms;
+}
+.wallet-adapter-modal-wrapper .wallet-adapter-button:hover {
+  background: var(--raised);
+}
+
+.wallet-adapter-button-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  border-radius: var(--radius);
+  padding: 7px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font-inter), sans-serif;
+  cursor: pointer;
+  transition: background 150ms, color 150ms, box-shadow 150ms;
+  white-space: nowrap;
+}
+.wallet-adapter-button-trigger:hover {
+  background: var(--accent);
+  color: var(--bg);
+  box-shadow: 0 0 20px rgba(245,158,11,0.25);
 }
