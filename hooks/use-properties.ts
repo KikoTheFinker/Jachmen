@@ -7,7 +7,7 @@ import { PublicKey } from '@solana/web3.js';
 import { publicKey } from '@metaplex-foundation/umi';
 import { createUmi } from '@metaplex-foundation/umi-bundle-defaults';
 import { mplCore } from '@metaplex-foundation/mpl-core';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { RawListingDecoded } from '@/lib/kataster-chain';
 import { toBn } from '@/lib/kataster-chain';
 import { landTypeFromCode } from '@/lib/land-type';
@@ -20,7 +20,9 @@ import { useKatasterProgram } from '@/components/providers/kataster-providers';
 type ListingDecoded = RawListingDecoded;
 type ListingRow = { account: ListingDecoded; publicKey: PublicKey };
 
-/** Apply kataster snapshots onto demo rows when Core fetch fails yet listing exists */
+// Single UMI instance — never recreated across renders
+const umiRead = createUmi(SOLANA_RPC).use(mplCore());
+
 export function overlayListing(
   seed: PropertyAsset,
   listing?: ListingDecoded,
@@ -68,72 +70,75 @@ async function listAll(program: Program<Idl> | null): Promise<ListingRow[]> {
   }
 }
 
-/** Core registry index — seeded demos overlap with live kataster vaults whenever those mints exist */
 export function usePropertyIndex(): {
   readonly properties: PropertyAsset[];
   readonly loading: boolean;
   readonly reload: () => void;
 } {
   const program = useKatasterProgram();
-  const [properties, setProperties] = useState<PropertyAsset[]>([]);
+
+  // Seeds are static — compute once, never re-run
+  const seeds = useMemo(() => buildDemoSeedProperties(), []);
+
+  // Show seed data immediately — no blank loading screen
+  const [properties, setProperties] = useState<PropertyAsset[]>(seeds);
   const [loading, setLoading] = useState(true);
   const [tick, setTick] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
+    setLoading(true);
 
     void (async () => {
-      setLoading(true);
-
+      // Step 1: fetch all on-chain listings (single batched RPC call)
       const rows = await listAll(program);
+      if (cancelled) return;
+
       const listings = new Map<string, ListingDecoded>();
       for (const row of rows) {
         listings.set(row.account.nftAsset.toBase58(), row.account);
       }
 
-      const seeds = buildDemoSeedProperties();
+      // Step 2: overlay listing data onto seeds synchronously (instant, no network)
+      const merged: PropertyAsset[] = seeds.map((seed) =>
+        overlayListing(seed, listings.get(seed.mint)),
+      );
 
-      /** Read helper — no signer */
-      const umiRead = createUmi(SOLANA_RPC).use(mplCore());
+      // Show results immediately after the single listings fetch
+      if (!cancelled) setProperties([...merged]);
 
-      const merged: PropertyAsset[] = [];
-
-      for (const seed of seeds) {
-        const lst = listings.get(seed.mint);
-        try {
-          const asset = (await fetchAsset(
-            umiRead,
-            publicKey(seed.mint),
-          )) as AssetV1;
-          let prop = mplAssetToProperty(seed.mint, asset, lst);
-          if (!prop) {
-            merged.push(overlayListing(seed, lst));
-            continue;
-          }
-          merged.push({
-            ...seed,
-            ...prop,
-            boundary:
-              prop.boundary.length >= 3 ? prop.boundary : seed.boundary,
-          });
-        } catch {
-          merged.push(overlayListing(seed, lst));
-        }
+      // Step 3: only fetch Core assets for mints that actually have on-chain listings
+      // (seeds without listings are definitely not minted — skip the failed RPC calls)
+      const listedMints = Array.from(listings.keys());
+      if (listedMints.length === 0) {
+        if (!cancelled) setLoading(false);
+        return;
       }
 
-      for (const [mint, lst] of Array.from(listings.entries())) {
-        if (merged.some((m) => m.mint === mint)) continue;
-        try {
+      const assetResults = await Promise.allSettled(
+        listedMints.map(async (mint) => {
+          const lst = listings.get(mint)!;
           const asset = (await fetchAsset(umiRead, publicKey(mint))) as AssetV1;
-          const prop = mplAssetToProperty(mint, asset, lst);
-          if (prop) merged.push(prop);
-        } catch {
-          //
-        }
+          return { mint, prop: mplAssetToProperty(mint, asset, lst) };
+        }),
+      );
+
+      if (cancelled) return;
+
+      for (const result of assetResults) {
+        if (result.status !== 'fulfilled' || !result.value?.prop) continue;
+        const { mint, prop } = result.value;
+        const idx = merged.findIndex((m) => m.mint === mint);
+        const updated = {
+          ...prop,
+          boundary: prop.boundary.length >= 3 ? prop.boundary : (merged[idx]?.boundary ?? prop.boundary),
+        };
+        if (idx >= 0) merged[idx] = { ...merged[idx], ...updated };
+        else merged.push(updated);
       }
 
       if (!cancelled) {
-        setProperties(merged);
+        setProperties([...merged]);
         setLoading(false);
       }
     })();
@@ -141,7 +146,7 @@ export function usePropertyIndex(): {
     return () => {
       cancelled = true;
     };
-  }, [program, tick]);
+  }, [program, seeds, tick]);
 
   return {
     properties,

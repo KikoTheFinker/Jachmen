@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 
 const links = [
@@ -13,6 +14,8 @@ const links = [
 
 export function SiteHeader() {
   const pathname = usePathname();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   return (
     <header className="sticky top-0 z-50 border-b border-k-border bg-k-bg/80 backdrop-blur-xl">
@@ -47,9 +50,9 @@ export function SiteHeader() {
           })}
         </nav>
 
-        {/* Wallet */}
+        {/* Wallet — only render client-side to avoid SSR/hydration mismatch */}
         <div className="ml-auto">
-          <WalletMultiButton className="wallet-adapter-button-trigger" />
+          {mounted && <WalletMultiButton className="wallet-adapter-button-trigger" />}
         </div>
       </div>
     </header>

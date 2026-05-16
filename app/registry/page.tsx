@@ -48,8 +48,7 @@ export default function RegistryPage() {
       if (status === 'owned' && p.status !== 'owned') return false;
       if (status === 'recent_sale' && p.status !== 'recent_sale') return false;
       if (p.areaM2 > areaMax) return false;
-      const priceHuman = typeof p.priceUsdcHuman === 'number' ? p.priceUsdcHuman : Infinity;
-      if (priceHuman > priceMax) return false;
+      if (typeof p.priceUsdcHuman === 'number' && p.priceUsdcHuman > priceMax) return false;
       return true;
     });
   }, [areaMax, landKind, municipality, priceMax, properties, q, status]);
@@ -76,7 +75,7 @@ export default function RegistryPage() {
       </div>
 
       {/* ── Map strip ───────────────────────────────────── */}
-      <div className="mb-8 h-[220px] w-full overflow-hidden rounded-xl border border-k-border">
+      <div className="mb-8 h-[420px] w-full overflow-hidden rounded-xl border border-k-border">
         <KatMap properties={filtered} highlighted={filtered[0]?.mint} />
       </div>
 
