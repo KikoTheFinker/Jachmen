@@ -43,7 +43,7 @@ function HistoryBlock({ property }: { property: PropertyAsset }) {
 
 function  FieldRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="grid grid-cols-[160px_1fr] gap-4 border-b border-k-border px-0 py-4">
+    <div className="grid grid-cols-[160px_1fr] gap-4 border-b border-k-border px-0 py-4 ps-4">
       <span className="text-xs font-medium text-k-muted pt-0.5">{label}</span>
       <div>{children}</div>
     </div>
@@ -119,7 +119,7 @@ export function PropertyDetail({ mint }: { mint: string }) {
         </div>
 
         {/* Field table */}
-        <div className="divide-y divide-k-border rounded-b-lg border border-k-border border-t-0 ps-4">
+        <div className="divide-y divide-k-border rounded-b-lg border border-k-border border-t-0">
           <FieldRow label="Area">
             <span className="text-xl font-bold text-k-text">{property.areaM2.toLocaleString()} m²</span>
           </FieldRow>
