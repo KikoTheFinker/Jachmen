@@ -41,7 +41,7 @@ function HistoryBlock({ property }: { property: PropertyAsset }) {
   );
 }
 
-function FieldRow({ label, children }: { label: string; children: React.ReactNode }) {
+function  FieldRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="grid grid-cols-[160px_1fr] gap-4 border-b border-k-border px-0 py-4">
       <span className="text-xs font-medium text-k-muted pt-0.5">{label}</span>
@@ -167,8 +167,8 @@ export function PropertyDetail({ mint }: { mint: string }) {
 
       {/* Sidebar */}
       <aside className="space-y-8">
-        <div className="space-y-0">
-          <div className="border-b border-k-border pb-3">
+        <div className="space-y-2">
+          <div>
             <p className="text-xs font-semibold text-k-muted">Transaction timeline</p>
           </div>
           <div className="mt-4">
